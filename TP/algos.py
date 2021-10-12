@@ -1,5 +1,5 @@
 # coding: utf-8
-
+import atexit
 import math
 
 
@@ -129,16 +129,17 @@ def theoremeChi(equs):
 
 
 def crible_erathostene(lim):
-    pre = [p for p in range(2, lim+1) if (p % 2 != 0) | (p == 2)]
-    tmp = []
-    for p in pre:
-        for p2 in pre:
-            if (p2 % p == 0) & (p2 != p):
-                tmp.append(p2)
-        for el in tmp:
-            pre.remove(el)
-    print(pre)
+    pre = [p for p in range(2, lim+1) if (p % 2 != 0)]
+    last = 0
+    try:
+        for p in pre:
+            last = p
+            for n in pre:
+                if (n % p == 0) & (n != p):
+                    pre.remove(n)
+    finally:
+        return last
 
 
 if __name__ == '__main__':
-    crible_erathostene(119)
+    print(crible_erathostene(12324))
