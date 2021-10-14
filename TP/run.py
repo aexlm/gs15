@@ -107,10 +107,19 @@ def disp_th_ch():
     input()
 
 
+def gen_rand_prem():
+    cls()
+    n = int(input("Nombre de bits du nombre à générer : "))
+    x = algos.big_prem_gen(n)
+    cls()
+    print("Nombre :", x, "\n\nBinaire :", bin(x), "\nTaille :", len(bin(x)) - 2)
+    input()
+
+
 if __name__ == '__main__':
     while 1:
         cls()
-        menu = "MENU \n=====================\n1. PGCD\n2. Inverse\n3. Résolution\n4. Théorème chinois\n"
+        menu = "MENU \n=====================\n1. PGCD\n2. Inverse\n3. Résolution\n4. Théorème chinois\n5. Génération nb premier sur n bits\n"
         choix = input(menu)
         if choix == "1":
             disp_pgcd()
@@ -120,5 +129,7 @@ if __name__ == '__main__':
             disp_solv()
         elif choix == "4":
             disp_th_ch()
+        elif choix == "5":
+            gen_rand_prem()
         else:
             break
