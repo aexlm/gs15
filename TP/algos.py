@@ -1,6 +1,8 @@
 # coding: utf-8
 import atexit
 import math
+import random
+from random import SystemRandom
 
 
 def euclide(a, b):
@@ -141,5 +143,69 @@ def crible_erathostene(lim):
         return last
 
 
+def prim_fermat(n):
+    a = random.randint(0, n-1)
+    print("Pour a = ", a)
+    if expo(a, n-1, n) == 1:
+        return True
+    else:
+        return False
+
+
+def coefs_s_d(n):
+    s, d = 0, n-1
+    while d % 2 == 0:
+        s += 1
+        d //= 2
+    return s, d
+
+
+def miller_temoin(n, a, d, s):
+    x = pow(a, d, n)
+    if (x == 1) | (x == n-1):
+        return False
+    for _ in range(s-1):
+        x = pow(x, 2, n)
+        if x == n-1:
+            return False
+    return True
+
+
+def miller_rabin(n, k):
+    if (n == 2) | (n == 3):
+        print("cul")
+        return True
+    if n % 2 == 0:
+        return False
+    s, d = coefs_s_d(n)
+    for _ in range(k):
+        a = random.randint(2, n-2)
+        if miller_temoin(n, a, d, s):
+            return False
+    return True
+
+
+def bigint_gen(n):
+    cryptogen = SystemRandom()
+    x = 2
+    while x % 2 == 0:
+        x = cryptogen.randint(pow(2, n-1), pow(2, n) - 1)
+    return x
+
+
+def big_prem_gen(n):
+    x = bigint_gen(n)
+    while not miller_rabin(x, 5):
+        x = bigint_gen(n)
+    return x
+
+
 if __name__ == '__main__':
-    print(crible_erathostene(12324))
+    # print(crible_erathostene(23983))
+    # print(prim_fermat(23981))
+
+    # print(miller_rabin(23981, 5))
+    a = bigint_gen(64)
+    print("int :", a, " ; bin :", bin(a), " ; taille :", len(bin(a)) - 2)
+
+    print(big_prem_gen(512))
