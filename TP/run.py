@@ -116,10 +116,20 @@ def gen_rand_prem():
     input()
 
 
+def disp_verif_nb():
+    cls()
+    n = int(input("Nombre à vérifier : "))
+    k = int(input("Nombre de tour pour Miller-Rabin : "))
+    prem = algos.miller_rabin(n, k)
+    cls()
+    print(n, " premier ?", prem)
+    input()
+
+
 if __name__ == '__main__':
     while 1:
         cls()
-        menu = "MENU \n=====================\n1. PGCD\n2. Inverse\n3. Résolution\n4. Théorème chinois\n5. Génération nb premier sur n bits\n"
+        menu = "MENU \n=====================\n1. PGCD\n2. Inverse\n3. Résolution\n4. Théorème chinois\n5. Génération nb premier sur n bits\n6. Verif Nombre premier\n"
         choix = input(menu)
         if choix == "1":
             disp_pgcd()
@@ -131,5 +141,7 @@ if __name__ == '__main__':
             disp_th_ch()
         elif choix == "5":
             gen_rand_prem()
+        elif choix == "6":
+            disp_verif_nb()
         else:
             break
