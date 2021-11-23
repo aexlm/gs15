@@ -189,5 +189,14 @@ def pseudo_gen_premier(nombre_de_bits):
             #print(f"Completed in {time.time() - startTime} seconds.")
             return safeprime
 
+"""
+=======================================================================================================================
+Algorithme qui prend une valeur hexadécimale en entrée et renvoi une valeur décimale en sortie
+========================================================================================================================
+"""
+def hexatodecimal(hexvalue):
+    xult = int(hexvalue, 16) 
+    return xult
+
 if __name__ == "__main__" :
     print(egcd(2500, 500))
