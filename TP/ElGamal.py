@@ -128,8 +128,8 @@ def ElGamaldecryption(sprime,generator,a,cipherpair):
   return plaintext 
   
 def tester():
-  bits = 512
-  (sprime,generator)=initialisation()
+  bits = 16
+  (sprime,generator)=initialisation(bits)
   (KE,a)=ElGamalKeygeneration(sprime,generator)
   msg = input("Veuillez entrer le message à chiffrer: \n")
   #msg = 123456789123456789123456789123456789123456789123456789

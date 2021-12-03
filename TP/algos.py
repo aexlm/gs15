@@ -1,5 +1,4 @@
 # coding: utf-8
-import atexit
 import math
 import random
 from random import SystemRandom
@@ -132,15 +131,15 @@ def theoremeChi(equs):
 
 def crible_erathostene(lim):
     pre = [p for p in range(2, lim+1) if (p % 2 != 0)]
-    last = 0
+    pre.append(2)
     try:
         for p in pre:
-            last = p
             for n in pre:
                 if (n % p == 0) & (n != p):
                     pre.remove(n)
     finally:
-        return last
+        pre.sort()
+        return pre
 
 
 def prim_fermat(n):
@@ -161,19 +160,18 @@ def coefs_s_d(n):
 
 
 def miller_temoin(n, a, d, s):
-    x = pow(a, d, n)
+    x = expo(a, d, n)
     if (x == 1) | (x == n-1):
         return False
     for _ in range(s-1):
-        x = pow(x, 2, n)
+        x = expo(x, 2, n)
         if x == n-1:
             return False
     return True
 
 
-def miller_rabin(n, k):
+def miller_rabin(n, k=5):
     if (n == 2) | (n == 3):
-        print("cul")
         return True
     if n % 2 == 0:
         return False
@@ -193,11 +191,67 @@ def bigint_gen(n):
     return x
 
 
-def big_prem_gen(n):
+def big_prem_gen(n, k=5):
     x = bigint_gen(n)
-    while not miller_rabin(x, 5):
+    while not miller_rabin(x, k):
         x = bigint_gen(n)
     return x
+
+
+# Fonction de génération d'un nombre premier fort
+def strong_prem_gen(n, lim=5):
+    """
+    :param n: le nombre de bits du nombre à générer
+    :param lim: la limite du nombre q premier tel que n-1/q est premier
+    :return: un nombre fortement premier sur n bits et ses diviseurs pour nb-1
+    """
+
+    liste = crible_erathostene(lim)
+
+    _continue = True
+    while _continue:
+        nb = big_prem_gen(n)
+        for p in liste:
+            if (nb - 1) % p == 0 and miller_rabin((nb - 1) // p):
+                divs = [p, (nb - 1) // p]
+                _continue = False
+                break
+
+    return nb, divs
+
+
+def find_gen(p, divs):
+    """
+    :param p: l'ordre du corps Zp dans lequel on travaille (p est fortement premier)
+    :param divs: les diviseurs de p-1
+    :return: un élément générateur du corps Zp
+    """
+
+    cryptogen = SystemRandom()
+
+    _continue = True
+    a = cryptogen.randint(2, p-1)
+
+    while _continue:
+        for d in divs:
+            if expo(a, d, p) != 1:
+                _continue = False
+            else:
+                a = cryptogen.randint(2, p-1)
+
+    return a
+
+
+def init_gen(n = 64):
+    """
+    Fonction qui génère un nombre premier fort p de n bits ainsi et un élément générateur de Zp a
+    :param n: le nombre de bits de p
+    :return: p, a
+    """
+
+    p, divs = strong_prem_gen(n)
+    a = find_gen(p, divs)
+    return p, a
 
 
 if __name__ == '__main__':
@@ -205,7 +259,11 @@ if __name__ == '__main__':
     # print(prim_fermat(23981))
 
     # print(miller_rabin(23981, 5))
-    a = bigint_gen(64)
-    print("int :", a, " ; bin :", bin(a), " ; taille :", len(bin(a)) - 2)
+    #a = bigint_gen(64)
+    #print("int :", a, " ; bin :", bin(a), " ; taille :", len(bin(a)) - 2)
 
-    print(big_prem_gen(512))
+    #p, divs = strong_prem_gen(16, 2)
+    #print(p, divs)
+    #print(find_gen(p, divs))
+
+    print(init_gen(16))
