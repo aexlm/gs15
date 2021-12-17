@@ -13,7 +13,7 @@ class Huissier:
     def print_voters(self):
         print(f'Huissier : {self.id}')
         for v in self.voters:
-            print("   ", v)
+            print(v)
 
     def __str__(self):
         str = f'Huissier {self.id}'
