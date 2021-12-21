@@ -6,9 +6,6 @@ def sendmail(receiver_email, subject, content):
     port = 1025  # For starttls
     sender_email = "gs15@mail.com"
 
-    # Create a secure SSL context
-    context = ssl.create_default_context()
-
     # Try to log in to server and send email
     try:
         server = smtplib.SMTP(smtp_server,port)

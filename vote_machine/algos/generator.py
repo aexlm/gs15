@@ -1,5 +1,4 @@
 import vote_machine.algos.maths as maths
-import sha256
 import hashlib
 from random import SystemRandom
 
@@ -171,7 +170,6 @@ def pbkdf1(password, salt, c=1000, dkLen = 15):
     for _ in range(c-1):
         h = hashlib.md5(h.hexdigest().encode())
     h = h.hexdigest()
-    print(h)
     dk = ''
     for i in range(dkLen):
         dk += h[i]

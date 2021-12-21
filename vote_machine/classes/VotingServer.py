@@ -22,8 +22,9 @@ class VotingServer:
         for _ in range(14):
             uuid += random.choice('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz')
         self.election.uuid = uuid
-        self.send_mails(admin_server, uuid)
-        credentials_server.gen_cred(uuid, admin_server)
+        # self.send_mails(admin_server, uuid)
+        l_pub = credentials_server.gen_cred(uuid, admin_server)
+        self.election.public_keys += l_pub
         self.send_election_data(admin_server)
 
     def send_mails(self, admin_server, uuid):

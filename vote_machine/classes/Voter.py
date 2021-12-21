@@ -6,8 +6,14 @@ class Voter:
         self.mail = mail.lower()
         self.weight = 1
         self.uuid = None
-        self.cred = None
+        self.pubc = None
+        self.__cred = None
 
     def __str__(self):
         str = f'   Uuid : {self.uuid}\n   Nom : {self.nom}\n   Prenom : {self.prenom}\n   Mail : {self.mail}'
         return str
+
+    def set_cred(self, pub, c):
+        # Check certif
+        self.pubc = pub
+        self.__cred = c

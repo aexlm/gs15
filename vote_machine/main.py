@@ -48,10 +48,10 @@ def start_vote():
     # print("p de Zp = ", _prime, "\nGenerateur g =", _generator)
     admin = ServerFactory.get_admin_server_instance()
     admin.start_vote(ServerFactory.get_voting_server_instance(), ServerFactory.get_credentials_server_instance())
-    id_elec = input("Entrez l'identifiant de l'election : ")
-    while id_elec != admin.get_election_uuid():
+    vote_code = input("Entrez votre code de vote : ")
+    while not admin.check_vote_code(vote_code):
         cls()
-        id_elec = input("Mauvais identifiant, reessayez : ")
+        vote_code = input("Mauvais code de vote, reessayez : ")
     cls()
     for question in admin.get_elec_questions():
         print(question, "\n")

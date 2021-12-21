@@ -41,6 +41,12 @@ class AdminServer:
             voters += h.voters
         return voters
 
+    def check_vote_code(self, vote_code):
+        if vote_code in self.election.public_keys:
+            return True
+        else:
+            return False
+
     def generate_uuid(self):
         uuid = ''
         for _ in range(14):

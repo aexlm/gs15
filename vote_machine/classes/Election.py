@@ -4,3 +4,4 @@ class Election:
         self.questions = questions
         self.uuid = None
         self.public_key = None
+        self.public_keys = []
