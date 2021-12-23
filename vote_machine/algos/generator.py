@@ -1,5 +1,5 @@
 import vote_machine.algos.maths as maths
-import hashlib
+
 from random import SystemRandom
 
 generateur = SystemRandom() # Génere de manière plus sécurisée
@@ -152,6 +152,7 @@ def el_gamal_key_generation(sprime, generator):
 
     return epk, a
 
+
 def init_gen(n = 256):
     """
     Fonction qui génère un nombre premier fort p de n bits ainsi et un élément générateur de Zp a
@@ -165,19 +166,8 @@ def init_gen(n = 256):
     return p, a
 
 
-def pbkdf1(password, salt, c=1000, dkLen = 15):
-    h = hashlib.md5((password + salt).encode())
-    for _ in range(c-1):
-        h = hashlib.md5(h.hexdigest().encode())
-    h = h.hexdigest()
-    dk = ''
-    for i in range(dkLen):
-        dk += h[i]
-    return dk
-
-
-if __name__ == '__main__':
-    passw = 'amoO3kF0kNCS9ml'
-    salt = 'paRi917bQl0kQj'
-    dk = pbkdf1(passw, salt)
-    print(dk)
+def generate_uuid():
+    uuid = ''
+    for _ in range(14):
+        uuid += generateur.choice('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz')
+    return uuid

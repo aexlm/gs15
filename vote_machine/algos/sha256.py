@@ -157,3 +157,6 @@ def _maj(x: int, y: int, z: int):
 def _rotate_right(num: int, shift: int, size: int = 32):
     """Rotate an integer right."""
     return (num >> shift) | (num << size - shift)
+
+if __name__ == "__main__":
+    print(hash256("Hello").hex())

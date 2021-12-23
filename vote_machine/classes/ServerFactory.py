@@ -21,7 +21,7 @@ class ServerFactory:
         return ServerFactory.__credentialsServerInstance
 
     @staticmethod
-    def get_voting_server_instance() -> VotingServer:
-        if ServerFactory.__votingServerInstance is None:
-            ServerFactory.__votingServerInstance = VotingServer()
+    def get_voting_server_instance(admin_server=None) -> VotingServer:
+        if ServerFactory.__votingServerInstance is None and admin_server is not None:
+            ServerFactory.__votingServerInstance = VotingServer(admin_server)
         return ServerFactory.__votingServerInstance

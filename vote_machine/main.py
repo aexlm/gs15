@@ -1,7 +1,7 @@
 # coding: utf-8
 import multiprocessing.pool
 import threading
-import algos.generator
+import vote_machine.algos as algos
 import os
 from classes.ServerFactory import ServerFactory
 from random import SystemRandom
@@ -19,8 +19,9 @@ past_primes = []
 _prime = 0
 _generator = 0
 
+
 def cls():
-    os.system('clear')
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def search():
@@ -45,20 +46,30 @@ def init():
 
 def start_vote():
     cls()
-    # print("p de Zp = ", _prime, "\nGenerateur g =", _generator)
     admin = ServerFactory.get_admin_server_instance()
-    admin.start_vote(ServerFactory.get_voting_server_instance(), ServerFactory.get_credentials_server_instance())
+    if len(admin.get_voters()) == 0:
+        input("Vous n'avez pas ajouté d'électeurs.")
+        return
+
+    voting = ServerFactory.get_voting_server_instance(admin)
+
+    if voting.election is None:
+        voting.create_election(ServerFactory.get_credentials_server_instance())
+
     vote_code = input("Entrez votre code de vote : ")
-    while not admin.check_vote_code(vote_code):
+    while not voting.check_vote_code(vote_code):
         cls()
         vote_code = input("Mauvais code de vote, reessayez : ")
-    cls()
-    for question in admin.get_elec_questions():
-        print(question, "\n")
-        choix = input("Votre choix ? ")
+
+    for question in voting.election.questions:
+        cls()
+        print(question.print_self(), "\n")
+        choice = int(input("Votre choix ? "))
+        while choice not in question.get_nbs():
+            choice = int(input("\nCe choix n'est pas proposé. Votre choix ?"))
         # Vote
-        input("\nChoix pris ! N'oubliez pas de le valider !")
-    input()
+
+    input("\nChoix enregistré ! N'oubliez pas de le valider !")
 
 
 def register_voter():
@@ -69,10 +80,10 @@ def register_voter():
 
     huis_ind = generateur.randint(0, 9)
     huis = ServerFactory.get_admin_server_instance().huissiers[huis_ind]
-    v = Voter(n,p,m)
+    v = Voter(n, p, m)
     huis.add_voter(v)
     cls()
-    print(f'Votant enregistre !\n{v}')
+    print(f'Votant enregistré !\n{v}')
     input()
 
 
@@ -84,7 +95,7 @@ if __name__ == '__main__':
 
     while 1:
         cls()
-        menu = "->1<- Créer un vote\n->2<- Enregistrer un electeur\n->3<- Enregistrer un vote\n->4<_ Verifier un vote\n->5<- Proceder au depouillement\n"
+        menu = "->1<- Créer un vote\n->2<- Enregistrer un electeur\n->3<- Valider un vote\n->4<_ Vérifier un vote\n->5<- Procéder au dépouillement\n"
         choix = int(input(menu))
         if choix == 1:
             #_prime, _generator = initialization.get()

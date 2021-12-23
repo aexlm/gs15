@@ -1,38 +1,40 @@
 import random
-
+from vote_machine.algos.generator import generate_uuid
 from vote_machine.classes.Election import Election
-import os, sys
-
-p = os.path.abspath('..')
-sys.path.insert(1, p)
-
-from email_sender import sendmail
+from vote_machine import email_sender
 
 
 class VotingServer:
 
-    def __init__(self):
-        self.voters = []
-        self.questions = []
+    def __init__(self, admin_server):
+        self.admin_server = self.check_admin_serv(admin_server)
+        self.voters = self.admin_server.get_voters()
+        self.questions = self.admin_server.questions
         self.election = None
+        self.l_pub = []
 
-    def create_election(self, admin_server, credentials_server):
+    def check_admin_serv(self, admin_serv):
+        # if admin trusted
+        return admin_serv
+
+    def create_election(self, credentials_server):
         self.election = Election(self.questions)
-        uuid = ''
-        for _ in range(14):
-            uuid += random.choice('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz')
-        self.election.uuid = uuid
+        self.election.uuid = generate_uuid()
         # self.send_mails(admin_server, uuid)
-        l_pub = credentials_server.gen_cred(uuid, admin_server)
-        self.election.public_keys += l_pub
-        self.send_election_data(admin_server)
+        self.l_pub += credentials_server.gen_cred(self.election.uuid, self.voters)
 
     def send_mails(self, admin_server, uuid):
         for voter in admin_server.get_voters():
             subject = "Vote - Identifiant de l'election"
             msg = f'{voter.prenom} {voter.nom}, voici l\'identifiant de l\'election : {uuid}'
-            sendmail(voter.mail, subject, msg)
+            email_sender.sendmail(voter.mail, subject, msg)
 
     def send_election_data(self, admin_server):
         if admin_server.election is None:
             admin_server.election = self.election
+
+    def check_vote_code(self, vote_code):
+        pub_ks = []
+        for el in self.l_pub:
+            pub_ks.append(el['pub_k'])
+        return vote_code in pub_ks

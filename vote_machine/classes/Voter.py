@@ -1,10 +1,10 @@
 class Voter:
 
-    def __init__(self, nom, prenom, mail):
+    def __init__(self, nom, prenom, mail, weight=1):
         self.nom = nom.upper()
         self.prenom = prenom.title()
         self.mail = mail.lower()
-        self.weight = 1
+        self.weight = weight
         self.uuid = None
         self.pubc = None
         self.__cred = None
