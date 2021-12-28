@@ -1,16 +1,37 @@
-"""Génération d'un couple clé publique / clé privée avec EL-Gamal
-"""
-from lecteur_de_fichiers import ouputfiles
-from random import randint
-import time
-from sha256 import hash256
-from mathsalgo import pseudo_gen_premier as gensafeprime, miller_rabin, expo_rapide_mod as fastexpo, hexatodecimal
+import random
 import os
+from random import randint
+from mathsTools import pseudo_gen_premier as gensafeprime, miller_rabin, expo_rapide_mod as fastexpo
 
-pwd = os.path.dirname(__file__)
-file = os.path.join(pwd, "files")
-subfile = "ElGamal"
-#startTime = time.time()
+a=random.randint(2,10)
+
+#To fing gcd of two numbers
+"""def gcd(a,b):
+    if a<b:
+        return gcd(b,a)
+    elif a%b==0:
+        return b
+    else:
+        return gcd(b,a%b)
+"""
+#For key generation i.e. large random number
+"""def gen_key(q):
+    key= random.randint(fastexpo(10,20),q)
+    while gcd(q,key)!=1:
+        key=random.randint(fastexpo(10,20),q)
+    return key
+"""
+"""def fastexpo(a,b,c):
+    x=1
+    y=a
+    while b>0:
+        if b%2==0:
+            x=(x*y)%c;
+        y=(y*y)%c
+        b=int(b/2)
+    return x%c"""
+
+
 def initialisation(nombre_bits_sprime = 512):
     """Generation d'un safe prime sprime et d'un élément générateur de Zp
 
@@ -32,7 +53,7 @@ def initialisation(nombre_bits_sprime = 512):
     #Utilisation du théorème de lagrange
     generator = 2
     while True and generator < (sprime-1):
-      q = (sprime-1)//2 
+      q = (sprime-1)//2
 
       # si l'ordre est différent de 1,2 et q alors generator est générateur dans Zp
       #if generator*generator % sprime != 1 and fastexpo(generator,q,sprime) != 1: 
@@ -41,7 +62,7 @@ def initialisation(nombre_bits_sprime = 512):
       else:
         generator +=1
       
-    return (sprime,generator)
+    return sprime,generator
 
 #print(initialisation())
 #print(f"Completed in {time.time() - startTime} seconds.")
@@ -60,92 +81,88 @@ def ElGamalKeygeneration(sprime,generator):
   """
   
   a = randint(2,sprime-2)
-  KE = pow(generator,a,sprime) #ephemeral Key, change pour chaque signature
+  KE = fastexpo(generator,a,sprime) #ephemeral Key, change pour chaque signature
   out = f"La clé publique générée est : {KE}" + f" et la clé privée générée est: {a}"
-  #fic = os.path.join(subfile, "ElGamalkeygen.txt")
-  ouputfiles(out, subfile, "ElGamalkeygen.txt")
 
-  return (KE,a)
+  return KE,a
 
+#For asymetric encryption
+def encryption(msg,q,h,g):
+    """ElGamal Encryption
 
+    Args:
+        msg (string): plaintext message
+        q (double): Represente le corps Zp
+        h (double): clé publique de celui qui va déchiffrer
+        g (double): element générateur de Zp
 
-def ElGamalencryption(sprime, generator, KE, msg, outfile):
-  """Fonction qui signe notre message hashé
+    Returns:
+        ciphertext,p: message chiffré, clé publique de celui qui a chiffré
+    """
+    # p ici c'est la clé public de l'émetteur (celui qui chiffre)
+    # k c'est la clé secrète de l'emetteur (celui qui chiffre)
+    # s ici c'est la clé partagée
+    ciphertext=[]                                
+    #k=gen_key(q)                                
+    p,k=ElGamalKeygeneration(q, g)
+    s=fastexpo(h,k,q)             
+    #p=fastexpo(g,k,q)                           
+    for i in range(0,len(msg)):
+        ciphertext.append(msg[i])
+    print("g^k used= ",p)
+    print("g^ak used= ",s)
+    for i in range(0,len(ciphertext)):
+        ciphertext[i]=s*ord(ciphertext[i])
+    return ciphertext,p
 
-  Args:
-      sprime (double): Nombre fortement premier (public)
-      generator (double): Génerateur dans Zsprime*
-      KE (double): Clé publique générée
-      msg (double): Message en hashé non signé
+#For decryption
+def decryption(ciphertext,p,key,q):
+    """
+    q, c'est le corps Zp dans lequel le message a été chiffré
+    key, ici c'est la clé secrète du recepteur (celui qui déchiffre)
+    h, ici c'est la clé partagée
+    p, c'est la clé publique de celui qui a chiffré
 
-  Returns:
-      (double, double): (KE, digest signé ElGamal)
-  """
-  msg = hash256(str(msg).encode()).hex()
-  msg = hexatodecimal(msg)
-  (K,b) = ElGamalKeygeneration(sprime,generator) 
-  share_key = pow(KE, b, sprime) % sprime  #share key
-  y = (msg * share_key) % sprime # y = résultat du chiffrement de msg
-  ptxt = f"Le message clair est: {msg}"
-  ouputfiles(ptxt, subfile, "Elgamal_message.txt")
-  out = f"Le message signé est: {y} et la clé publique utilisée est : {KE}"
-  #fic = os.path.join(subfile, outfile)
-  ouputfiles(out, subfile, outfile)
-  
-  return (K, y)
+    """          
+    plaintext=[]                         
+    h=fastexpo(p,key,q)               
+    for i in range(0,len(ciphertext)):
+        plaintext.append(chr(int(ciphertext[i]/h)))
+    return plaintext
 
-def ElGamal_trans_encryption(sprime, generator, a, msg, outfile):
-      subfile = os.path.join(file, "Blockchain")
-      msg = hash256(str(msg).encode()).hex()
-      msg = hexatodecimal(msg)
-      (K,b) = ElGamalKeygeneration(sprime,generator) 
-      share_key = pow(a, b, sprime) % sprime  #share key
-      y = (msg * share_key) % sprime # y = résultat du chiffrement de msg
-      #ptxt = f"Le message clair est: {msg}"
-      #ouputfiles(ptxt, subfile, "Elgamal_message.txt")
-      out = f"Le message signé est: {y} et la clé privée utilisée est : {a}"
-      #fic = os.path.join(subfile, outfile)
-      ouputfiles(out, subfile, outfile)
-  
-      return (K, y)
+bits = 512
+q,g=initialisation(bits)
+h,key=ElGamalKeygeneration(q,g)
+# h/key étant le couple clé publique/clé privée du recepteur (celui qui déchiffre)
+msg=input("Enter the message: ")
+#q=random.randint(fastexpo(10,20),fastexpo(10,50))
+#g=random.randint(2,q)
+#key=gen_key(q)
+#h=fastexpo(g,key,q)
+print("g used=",g)
+print("g^a used=",h)
+ciphertext,p=encryption(msg,q,h,g)
+print("Original Message=",msg)
+print("Encrypted Maessage=",ciphertext)
+plaintext=decryption(ciphertext,p,key,q)
+d_msg=''.join(plaintext)
+print("Decryted Message=",d_msg)
 
+"""
+Public Parameter: A trusted third party publishes a large prime number p and a generator g.
 
+1.Key Generation:
 
-def ElGamaldecryption(sprime,generator,a,cipherpair):
-  """Verification de signature
+Alice chooses a secret key 1<=a<=p-1.
+Computes A=g^a mod p.
+Alice se1<=k<=p and the public key pk=(p, g, A) to Bob.
+2. Encryption:
 
-  Args:
-      sprime (double): Safe prime (public)
-      generator (double): Generateur dans Zsprime
-      a (double): valeur aléatoire représentant la clé privée
-      cipherpair (double): Message hashé signé ElGamal
+Bob chooses a unique random number key 1<=k<=p-1.
+Uses Alice’s public key pk and key k to compute the ciphertext (c1,c2) =Epk(m) of the plaintext 1<=m<=p-1 where c1=g^k mod p and c2=m.A^k mod p.
+The ciphertext (c1,c2) is sent to Alice by Bob.
+3. Decryption:
 
-  Returns:
-      double: Message hashé avant signature
-  """
-  (KE,y) = cipherpair
-  plaintext = y*pow(KE,sprime-1-a,sprime) % sprime #plaintext = y * inverse(KE**a) % sprime
-  return plaintext 
-  
-def tester():
-  bits = 16
-  (sprime,generator)=initialisation(bits)
-  (KE,a)=ElGamalKeygeneration(sprime,generator)
-  msg = input("Veuillez entrer le message à chiffrer: \n")
-  #msg = 123456789123456789123456789123456789123456789123456789
-  #assert msg < sprime
-  print (bits, 'bit prime ', sprime)
-  print ('generator', generator)
-  print ('KE', KE)
-  print ('a', a)
-  print ('msg:', msg)
-  cipherpair = ElGamalencryption(sprime,generator,KE, msg, "ElGamaltest.txt")
-  (B, cipher) = cipherpair
-  print ('B', B)
-  print ('cipher', cipher)
-  decrypted = ElGamaldecryption(sprime,generator,a, cipherpair)
-  print ('decrypted:', decrypted)
-
-if __name__ == '__main__':
-  tester()
-  pass
+Alice computes x=c1^a mod p  and its inverse x^-1 with the extended Euclidean algorithm.
+Computes the plaintext m’=Dsk(c1,c2)= x^-1.c2 mod p where m’=m.
+"""

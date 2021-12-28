@@ -1,5 +1,5 @@
 # coding: utf-8
-import random
+import random,os
 
 generateur = random.SystemRandom() # Génere de manière plus sécurisée 
 """"
@@ -142,11 +142,11 @@ def simple_miller(n, a):
     while not exposant & 1: 
         exposant >>= 1
     
-    if expo_rapide_mod(a, exposant, n) == 1: #positive one
+    if pow(a, exposant, n) == 1: #positive one
         return True
         
     while exposant < n - 1:
-        if expo_rapide_mod(a, exposant, n) == n - 1: #negative one
+        if pow(a, exposant, n) == n - 1: #negative one
             return True
             
         exposant <<= 1
