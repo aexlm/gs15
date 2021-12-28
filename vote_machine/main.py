@@ -45,7 +45,19 @@ def init():
 
 def start_vote():
     cls()
-    print("p de Zp = ", _prime, "\nGenerateur g =", _generator)
+    # print("p de Zp = ", _prime, "\nGenerateur g =", _generator)
+    admin = ServerFactory.get_admin_server_instance()
+    admin.start_vote(ServerFactory.get_voting_server_instance(), ServerFactory.get_credentials_server_instance())
+    vote_code = input("Entrez votre code de vote : ")
+    while not admin.check_vote_code(vote_code):
+        cls()
+        vote_code = input("Mauvais code de vote, reessayez : ")
+    cls()
+    for question in admin.get_elec_questions():
+        print(question, "\n")
+        choix = input("Votre choix ? ")
+        # Vote
+        input("\nChoix pris ! N'oubliez pas de le valider !")
     input()
 
 
@@ -55,9 +67,12 @@ def register_voter():
     p = input("Entrez votre prenom : ")
     m = input("Entrez votre mail : ")
 
-    huis_ind = generateur.randint(0,9)
+    huis_ind = generateur.randint(0, 9)
     huis = ServerFactory.get_admin_server_instance().huissiers[huis_ind]
-    huis.add_voter(Voter(n,p,m))
+    v = Voter(n,p,m)
+    huis.add_voter(v)
+    cls()
+    print(f'Votant enregistre !\n{v}')
     input()
 
 
@@ -65,14 +80,14 @@ if __name__ == '__main__':
     search = threading.Thread(target=search, daemon=True).start()
     pool = multiprocessing.pool.ThreadPool(processes=1)  # https://tinyurl.com/y5syn7wb
     initialization = pool.apply_async(init)
-
+    #os.system(python -m smtpd -c DebuggingServer -n localhost:1025)
 
     while 1:
         cls()
         menu = "->1<- Créer un vote\n->2<- Enregistrer un electeur\n->3<- Enregistrer un vote\n->4<_ Verifier un vote\n->5<- Proceder au depouillement\n"
         choix = int(input(menu))
         if choix == 1:
-            _prime, _generator = initialization.get()
+            #_prime, _generator = initialization.get()
             start_vote()
         elif choix == 2:
             register_voter()
