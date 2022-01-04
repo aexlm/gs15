@@ -1,6 +1,7 @@
-import vote_machine.algos.maths as maths
+#import vote_machine.algos.maths as maths
 import hashlib
 from random import SystemRandom
+from algos import maths as maths
 
 generateur = SystemRandom() # Génere de manière plus sécurisée
 

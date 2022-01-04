@@ -2,7 +2,7 @@ import random
 import os, sys
 import algos.generator
 
-from vote_machine.email_sender import sendmail
+from classes import email_sender
 
 
 p = os.path.abspath('..')
@@ -44,10 +44,10 @@ class CredentialsServer:
     def mail(self, voter, private_c):
         subject1 = "Vote - Votre code de vote"
         msg1 = f'{voter.prenom} {voter.nom}, voici votre code de vote : {voter.pubc}'
-        sendmail(voter.mail, subject1, msg1)
+        email_sender.sendmail(voter.mail, subject1, msg1)
         subject2 = "Vote - Votre mot de passe"
         msg2 = f'{voter.prenom} {voter.nom}, voici votre mot de passe : {private_c}'
-        sendmail(voter.mail, subject2, msg2)
+        email_sender.sendmail(voter.mail, subject2, msg2)
 
 
 if __name__ == '__main__':

@@ -69,4 +69,4 @@ class AdminServer:
         if self.election is None:
             self.init_questions()
             self.give_uuid()
-            self.send_to_voting(voting_server, credentials_server)
+            self.send_to_voting(voting_server, credentials_server) # les communications entre serveurs doive,t etre chiffré avec blowfish

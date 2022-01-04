@@ -1,7 +1,7 @@
 # coding: utf-8
 import multiprocessing.pool
 import threading
-import algos.generator
+from algos import generator
 import os
 from classes.ServerFactory import ServerFactory
 from random import SystemRandom
@@ -30,7 +30,7 @@ def cls():
 def search():
     while 1:
         while len(sprime_512) < 2:
-            p = algos.generator.strong_prem_gen(NB_BITS)
+            p = generator.strong_prem_gen(NB_BITS)
             if p not in sprime_512 and p not in past_primes:
                 sprime_512.append(p)
 
@@ -41,7 +41,7 @@ def init():
         if len(sprime_512) > 0:
             p = sprime_512.pop(0)
             past_primes.append(past_primes)
-            g = algos.generator.find_gen(p, [2, p/2])
+            g = generator.find_gen(p, [2, p/2])
             loop = False
 
     return p,g
@@ -59,9 +59,9 @@ def start_vote():
     cls()
     for question in admin.get_elec_questions():
         print(question, "\n")
-        choix = input("Votre choix ? ")
+        choix = input("Votre choix ? ") # Le choix du votant est ensuite chiffré ElGamal
         # Vote
-        input("\nChoix pris ! N'oubliez pas de le valider !")
+        input("\nChoix pris ! N'oubliez pas de le valider !") #Tant que le choix n'est pas enregistré il peut etre modifié
     input()
 
 

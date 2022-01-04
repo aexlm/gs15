@@ -1,5 +1,4 @@
-
-import random as SystemRandom
+from random import SystemRandom
 
 generateur = SystemRandom() # Génere de manière plus sécurisée
 

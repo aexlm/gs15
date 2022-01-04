@@ -6,7 +6,8 @@ import os, sys
 p = os.path.abspath('..')
 sys.path.insert(1, p)
 
-from email_sender import sendmail
+from classes import email_sender
+#from email_sender import sendmail
 
 
 class VotingServer:
@@ -31,7 +32,7 @@ class VotingServer:
         for voter in admin_server.get_voters():
             subject = "Vote - Identifiant de l'election"
             msg = f'{voter.prenom} {voter.nom}, voici l\'identifiant de l\'election : {uuid}'
-            sendmail(voter.mail, subject, msg)
+            email_sender.sendmail(voter.mail, subject, msg)
 
     def send_election_data(self, admin_server):
         if admin_server.election is None:
