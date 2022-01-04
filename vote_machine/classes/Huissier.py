@@ -1,4 +1,4 @@
-from vote_machine.classes.Voter import Voter
+from classes.Voter import Voter
 
 
 class Huissier:

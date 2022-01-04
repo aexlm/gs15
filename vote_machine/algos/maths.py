@@ -1,3 +1,8 @@
+
+import random as SystemRandom
+
+generateur = SystemRandom() # Génere de manière plus sécurisée
+
 """
 ==========================================================================================================================
 Algorithme qui détermine l'inverse d'un entier par euclide etendu avec calcul de phi(n) et decomposition en nombre premier

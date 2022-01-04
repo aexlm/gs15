@@ -1,6 +1,6 @@
 import random
 
-from vote_machine.classes.Election import Election
+from classes.Election import Election
 import os, sys
 
 p = os.path.abspath('..')

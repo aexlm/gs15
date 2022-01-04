@@ -6,7 +6,7 @@ import os
 from classes.ServerFactory import ServerFactory
 from random import SystemRandom
 
-from vote_machine.classes.Voter import Voter
+from classes.Voter import Voter
 
 generateur = SystemRandom()
 
@@ -20,7 +20,11 @@ _prime = 0
 _generator = 0
 
 def cls():
-    os.system('clear')
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
+            
 
 
 def search():

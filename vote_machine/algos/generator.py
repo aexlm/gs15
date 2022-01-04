@@ -1,4 +1,4 @@
-import maths as maths
+import vote_machine.algos.maths as maths
 import hashlib
 from random import SystemRandom
 

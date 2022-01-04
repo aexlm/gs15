@@ -1,7 +1,7 @@
 import random
 
-from vote_machine.classes.Huissier import Huissier
-from vote_machine.classes.Question import Question
+from classes.Huissier import Huissier
+from classes.Question import Question
 
 
 class AdminServer:

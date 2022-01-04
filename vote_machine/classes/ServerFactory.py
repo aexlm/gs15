@@ -1,6 +1,6 @@
-from vote_machine.classes.AdminServer import AdminServer
-from vote_machine.classes.CredentialsServer import CredentialsServer
-from vote_machine.classes.VotingServer import VotingServer
+from classes.AdminServer import AdminServer
+from classes.CredentialsServer import CredentialsServer
+from classes.VotingServer import VotingServer
 
 
 class ServerFactory:

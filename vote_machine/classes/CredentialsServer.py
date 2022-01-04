@@ -1,11 +1,12 @@
 import random
 import os, sys
+import algos.generator
+
+from vote_machine.email_sender import sendmail
+
 
 p = os.path.abspath('..')
 sys.path.insert(1, p)
-
-from email_sender import sendmail
-import algos.generator
 
 
 class CredentialsServer:
@@ -36,7 +37,9 @@ class CredentialsServer:
         return c
 
     def gen_pub_c(self, private_c, uuid):
-        return algos.generator.pbkdf1(private_c, uuid)
+        return algos.generator.pbkdf1(private_c, uuid) 
+        # N'est-ce pas plutot s=algos.generator.pbkdf1(private_c, uuid)  
+        # Et Pub_c = g**s % p ????????
 
     def mail(self, voter, private_c):
         subject1 = "Vote - Votre code de vote"
@@ -49,4 +52,4 @@ class CredentialsServer:
 
 if __name__ == '__main__':
     cs = CredentialsServer()
-    #cs.gen_private_c()
+    print(cs.gen_private_c())
