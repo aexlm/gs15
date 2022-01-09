@@ -1,4 +1,8 @@
-import hashlib
+import hashlib, base64
+import vote_machine.algos.sha256 as sha256
+from vote_machine.algos.maths import exponentation_rapide
+import vote_machine.values as values
+from random import SystemRandom
 
 
 def pbkdf1(password, salt, c=1000, dkLen = 16):
@@ -11,25 +15,17 @@ def pbkdf1(password, salt, c=1000, dkLen = 16):
         dk += h[i]
     return dk
 
-"""
-def pbkdf2(password, salt, c=1000, dkLen = 16):
-    hLen = 32
-    if dkLen > (2**32 - 1) * hLen:
-        return
-    l = dkLen // hLen
-    r = dkLen - (l - 1) * hLen
-    dk = ''
-    #for t in l:
+
+def private_2_pub(private_c, uuid):
+    dk = pbkdf1(private_c, uuid)
+    s = int(dk, 16) % values.q
+    return exponentation_rapide(values.g, s, values.q)
 
 
-def prf(password, salt, c, i):
-    t = ''
-    #for _ in c:"""
-
-
-
-def hjson(data):
-    pass
+def hjson(election):
+    election_sha = sha256.hash256(str(election))
+    election_b64 = base64.b64encode(election_sha)
+    return election_b64.decode("utf-8")
 
 
 if __name__ == '__main__':

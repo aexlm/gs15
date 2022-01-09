@@ -4,11 +4,13 @@ import json
 class Question:
 
     def __init__(self, enonce):
+        self.uuid = None
         self.enonce = enonce
         self.choix = []
 
     def __iter__(self):
         yield from {
+            "uuid" : self.uuid,
             "enonce": self.enonce,
             "choix": self.choix
         }.items()

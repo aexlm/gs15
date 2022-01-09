@@ -1,2 +1,1 @@
 import vote_machine.email_sender as email_sender
-import values

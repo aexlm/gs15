@@ -2,6 +2,7 @@ import json
 
 from vote_machine.classes.Question import Question
 from vote_machine.json_encoder import JsonEncoder
+from vote_machine.algos.encryption import hjson
 
 
 class Election:
@@ -34,3 +35,8 @@ if __name__ == '__main__':
     questions = [q]
     e = Election(questions)
     print(e.serialize())
+    h = hjson(e.serialize())
+    e2 = e.serialize()
+    h2 = hjson(e2)
+    print(h.decode("utf-8"))
+    print(h2)

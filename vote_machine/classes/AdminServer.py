@@ -17,6 +17,7 @@ class AdminServer:
     def init_questions(self):
         q = Question("Quel est le meilleur duo ?")
         choix = ["Remi Cogranne et Nicolas Burger", "Jordan et Pippen", "Superman et Batman", "Asterix et Obelix"]
+        q.uuid = generate_uuid()
         q.set_choix(choix)
         self.questions.append(q)
 

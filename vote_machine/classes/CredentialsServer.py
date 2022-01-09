@@ -2,6 +2,8 @@ import random
 from random import SystemRandom
 import vote_machine.algos as algos
 import vote_machine.values as values
+import vote_machine.algos.sha256 as sha256
+from vote_machine.algos.encryption import private_2_pub
 from vote_machine import email_sender
 
 
@@ -34,13 +36,12 @@ class CredentialsServer:
         return c
 
     def gen_pub_c(self, private_c, uuid):
-        dk = algos.encryption.pbkdf1(private_c, uuid)
-        s = int(dk, 16) % values.q
-        return algos.maths.exponentation_rapide(values.g, s, values.p)
+        return private_2_pub(private_c, uuid)          # La valeur numérique en tant que big_int est stocké pour Pub(cn)
 
     def mail(self, voter, private_c):
         subject1 = "Vote - Votre code de vote"
-        msg1 = f'{voter.prenom} {voter.nom}, voici votre code de vote : {voter.pubc}'
+        sha_pubc = sha256.hash256(str(voter.pubc)).hex()
+        msg1 = f'{voter.prenom} {voter.nom}, voici votre code de vote : {sha_pubc}' # Mais cette valeur est hashée pour l'envoyer au votant
         email_sender.sendmail(voter.mail, subject1, msg1)
         subject2 = "Vote - Votre mot de passe"
         msg2 = f'{voter.prenom} {voter.nom}, voici votre mot de passe : {private_c}'
@@ -49,4 +50,7 @@ class CredentialsServer:
 
 if __name__ == '__main__':
     cs = CredentialsServer()
-    #cs.gen_private_c()
+    pub_c = str(cs.gen_pub_c("pyvdwxNrGhm8mPh", "oiokjnj09"))
+    print(pub_c)
+    h_pubc = sha256.hash256(pub_c).hex()
+    print(h_pubc)
